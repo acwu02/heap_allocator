@@ -16,14 +16,14 @@ impl BumpAllocator {
 
 unsafe impl GlobalAlloc for BumpAllocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        let alloc_offset = self.offset.get();
-        let alloc_start = self.start + alloc_offset;
-        let alloc_end = alloc_start + layout.size();
-        if alloc_end > self.end {
+        let heap_offset = self.offset.get();
+        let heap_start = self.start + heap_offset;
+        let heap_end = heap_start + layout.size();
+        if heap_end > self.end {
             return ptr::null_mut();
         } else {
-            let ptr: usize = alloc_start;
-            self.offset.set(alloc_offset + layout.size());
+            let ptr: usize = heap_start;
+            self.offset.set(heap_offset + layout.size());
             return ptr as *mut u8;
         }
     }
